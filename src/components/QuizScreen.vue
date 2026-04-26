@@ -22,6 +22,7 @@ const categoryInfo = computed(() =>
 )
 const canGoNext = computed(() => currentAnswer.value !== null)
 const canGoBack = computed(() => currentIndex.value > 0)
+const canUseNext = computed(() => canGoNext.value && !locked.value)
 
 const progressPct = computed(() => ((currentIndex.value) / total) * 100)
 
@@ -127,7 +128,7 @@ function goBack() {
       </button>
       <button
         class="nav-btn next-btn"
-        :disabled="!canGoNext"
+        :disabled="!canUseNext"
         @click="advance"
       >
         {{ currentIndex < total - 1 ? 'Next →' : 'See Results →' }}
@@ -270,7 +271,8 @@ function goBack() {
 }
 
 .nav-btn {
-  flex: 1;
+  flex: 1 1 0;
+  min-width: 0;
   padding: 16px;
   border-radius: var(--radius-sm);
   font-size: 15px;
@@ -291,8 +293,6 @@ function goBack() {
   background: var(--surface);
   color: var(--text-muted);
   border: 2px solid var(--border);
-  flex: 0 0 auto;
-  padding-inline: 20px;
 }
 
 .next-btn {
