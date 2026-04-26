@@ -30,11 +30,11 @@ export const questions: Question[] = [
   { id: 20, text: 'I lose track of the bigger goal while focusing on details', category: 'detail' },
 
   // Action Flexibility
-  { id: 21, text: 'I prefer figuring things out as I go rather than following instructions', category: 'action' },
-  { id: 22, text: 'I jump between tasks based on interest or energy', category: 'action' },
-  { id: 23, text: 'Strict step-by-step processes feel restrictive', category: 'action' },
+  { id: 21, text: 'I prefer having clear instructions before starting a task', category: 'action' },
+  { id: 22, text: 'I get pulled away from tasks by more stimulating things', category: 'action' },
+  { id: 23, text: 'I rely on step-by-step processes to get things done', category: 'action' },
   { id: 24, text: 'I can hyperfocus intensely on things that interest me', category: 'action' },
-  { id: 25, text: 'I struggle to start tasks that feel rigid or predefined', category: 'action' },
+  { id: 25, text: 'I struggle to start open-ended tasks with no clear structure', category: 'action' },
 ]
 
 export const categoryInfoList: CategoryInfo[] = [
