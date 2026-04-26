@@ -25,13 +25,13 @@ npm run dev
 
 ## Categories
 
-| Category             | Questions | Score range |
-| -------------------- | --------- | ----------- |
-| Sensory Sensitivity  | 5         | 0–15        |
-| Social Intuition     | 5         | 0–15        |
-| Structure Preference | 5         | 0–15        |
-| Detail Focus         | 5         | 0–15        |
-| Executive Function   | 5         | 0–15        |
+| Category                 | Questions | Score range |
+| ------------------------ | --------- | ----------- |
+| Sensory Sensitivity      | 5         | 0–15        |
+| Social Processing Load   | 5         | 0–15        |
+| Structure Preference     | 5         | 0–15        |
+| Detail Focus             | 5         | 0–15        |
+| Executive Function Load  | 5         | 0–15        |
 
 **Total: 0–75**
 

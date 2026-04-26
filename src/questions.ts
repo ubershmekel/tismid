@@ -28,7 +28,7 @@ export const questions: Question[] = [
     category: "sensory",
   },
 
-  // Social Intuition
+  // Social Processing Load
   {
     id: 6,
     text: "I miss subtle social cues (tone, facial expressions, hints)",
@@ -109,7 +109,7 @@ export const questions: Question[] = [
     category: "detail",
   },
 
-  // Executive Function
+  // Executive Function Load
   {
     id: 21,
     text: "I find it hard to stop an activity and switch to something else",
@@ -147,28 +147,28 @@ export const categoryInfoList: CategoryInfo[] = [
   },
   {
     key: "social",
-    name: "Social Friction",
+    name: "Social Processing Load",
     shortName: "Social",
     color: "#4aa8d8",
     cssVar: "--c-social",
   },
   {
     key: "structure",
-    name: "Bias to Structure",
+    name: "Structure Preference",
     shortName: "Structure",
     color: "#9b7edc",
     cssVar: "--c-structure",
   },
   {
     key: "detail",
-    name: "Bias to Detail",
+    name: "Detail Focus",
     shortName: "Detail",
     color: "#52b788",
     cssVar: "--c-detail",
   },
   {
     key: "action",
-    name: "Executive Function Cost",
+    name: "Executive Function Load",
     shortName: "Executive",
     color: "#d4a82a",
     cssVar: "--c-action",
