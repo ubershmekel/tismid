@@ -11,6 +11,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
+  back: []
   restart: []
 }>()
 
@@ -156,22 +157,29 @@ function confirmRestart() {
 
       <!-- Action buttons -->
       <div class="action-row">
-        <button class="share-btn" :class="{ loading: sharing }" @click="share">
-          <span v-if="!sharing">Share</span>
-          <span v-else>Generating...</span>
-        </button>
-        <button class="download-btn" :class="{ loading: downloading }" @click="downloadImage">
-          <span v-if="!downloading">Download image</span>
-          <span v-else>Generating...</span>
-        </button>
-        <button class="copy-btn" :class="{ copied }" @click="copyText">
-          <span v-if="copied">Copied</span>
-          <span v-else-if="copying">Copying...</span>
-          <span v-else>Copy text</span>
-        </button>
-        <button class="restart-btn" @click="showRestartConfirm = true">
-          Start over
-        </button>
+        <div class="primary-actions">
+          <button class="share-btn" :class="{ loading: sharing }" @click="share">
+            <span v-if="!sharing">Share</span>
+            <span v-else>Generating...</span>
+          </button>
+          <button class="download-btn" :class="{ loading: downloading }" @click="downloadImage">
+            <span v-if="!downloading">Download image</span>
+            <span v-else>Generating...</span>
+          </button>
+          <button class="copy-btn" :class="{ copied }" @click="copyText">
+            <span v-if="copied">Copied</span>
+            <span v-else-if="copying">Copying...</span>
+            <span v-else>Copy text</span>
+          </button>
+        </div>
+        <div class="secondary-actions">
+          <button class="back-btn" @click="emit('back')">
+            Back
+          </button>
+          <button class="restart-btn" @click="showRestartConfirm = true">
+            Start over
+          </button>
+        </div>
       </div>
     </div>
 
@@ -271,9 +279,23 @@ function confirmRestart() {
 /* Actions */
 .action-row {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 12px;
   margin-top: 4px;
+}
+
+.primary-actions,
+.secondary-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.primary-actions {
+  flex-wrap: wrap;
+}
+
+.secondary-actions {
+  justify-content: flex-start;
 }
 
 .share-btn,
@@ -318,6 +340,7 @@ function confirmRestart() {
   cursor: wait;
 }
 
+.back-btn,
 .restart-btn {
   padding: 18px 20px;
   background: var(--surface);
@@ -330,6 +353,7 @@ function confirmRestart() {
   white-space: nowrap;
 }
 
+.back-btn:active,
 .restart-btn:active {
   transform: scale(0.97);
 }
@@ -400,13 +424,16 @@ function confirmRestart() {
 }
 
 @media (max-width: 520px) {
-  .action-row {
+
+  .primary-actions,
+  .secondary-actions {
     flex-direction: column;
   }
 
   .share-btn,
   .download-btn,
   .copy-btn,
+  .back-btn,
   .restart-btn {
     width: 100%;
   }

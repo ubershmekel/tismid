@@ -49,12 +49,21 @@ function onRestart() {
   answers.value = {}
   screen.value = 'quiz'
 }
+
+function onBackToQuiz() {
+  saveQuizProgress({
+    answers: answers.value,
+    currentIndex: questions.length - 1,
+    completed: false,
+  })
+  screen.value = 'quiz'
+}
 </script>
 
 <template>
   <Transition name="fade" mode="out-in">
     <QuizScreen v-if="screen === 'quiz'" key="quiz" @complete="onComplete" />
-    <ResultsScreen v-else key="results" :answers="answers" @restart="onRestart" />
+    <ResultsScreen v-else key="results" :answers="answers" @back="onBackToQuiz" @restart="onRestart" />
   </Transition>
 </template>
 
