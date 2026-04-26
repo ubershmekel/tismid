@@ -15,6 +15,9 @@ const emit = defineEmits<{
 
 const shareCardRef = ref<HTMLElement | null>(null)
 const sharing = ref(false)
+const downloading = ref(false)
+const copying = ref(false)
+const copied = ref(false)
 const barsVisible = ref(false)
 
 const totalScore = computed(() =>
@@ -35,16 +38,78 @@ onMounted(() => {
   setTimeout(() => { barsVisible.value = true }, 150)
 })
 
+function getShareCardElement() {
+  return (shareCardRef.value as any)?.$el ?? shareCardRef.value
+}
+
+async function createCardImage() {
+  const el = getShareCardElement()
+  if (!el) return null
+
+  return toPng(el, {
+    pixelRatio: 2,
+    backgroundColor: '#ffffff',
+  })
+}
+
+function getShareText() {
+  const scoreLines = categoryScores.value
+    .map(cat => `${cat.name}: ${cat.score}/15 (${cat.label})`)
+    .join('\n')
+
+  return [
+    `My TismID: ${totalScore.value}/75`,
+    '',
+    scoreLines,
+    '',
+    'Get yours at https://ubershmekel.github.io/tismid/',
+  ].join('\n')
+}
+
+async function copyToClipboard(text: string) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(text)
+    return
+  }
+
+  const textArea = document.createElement('textarea')
+  textArea.value = text
+  textArea.setAttribute('readonly', '')
+  textArea.style.position = 'fixed'
+  textArea.style.top = '-9999px'
+  document.body.appendChild(textArea)
+  textArea.select()
+  document.execCommand('copy')
+  document.body.removeChild(textArea)
+}
+
+async function downloadImage() {
+  if (downloading.value || !shareCardRef.value) return
+  downloading.value = true
+
+  try {
+    const dataUrl = await createCardImage()
+
+    if (dataUrl) {
+      const link = document.createElement('a')
+      link.download = 'my-tismid.png'
+      link.href = dataUrl
+      link.click()
+    }
+  } catch (err) {
+    console.warn('Download failed:', err)
+  } finally {
+    downloading.value = false
+  }
+}
+
 async function share() {
   if (sharing.value || !shareCardRef.value) return
   sharing.value = true
 
   try {
-    const el = (shareCardRef.value as any)?.$el ?? shareCardRef.value
-    const dataUrl = await toPng(el, {
-      pixelRatio: 2,
-      backgroundColor: '#ffffff',
-    })
+    const dataUrl = await createCardImage()
+    if (!dataUrl) return
 
     const blob = await fetch(dataUrl).then(r => r.blob())
     const file = new File([blob], 'my-tismid.png', { type: 'image/png' })
@@ -52,7 +117,7 @@ async function share() {
     if (navigator.canShare?.({ files: [file] })) {
       await navigator.share({
         files: [file],
-        text: "My TismID, here's how my brain works",
+        text: getShareText(),
       })
     } else {
       const link = document.createElement('a')
@@ -61,10 +126,24 @@ async function share() {
       link.click()
     }
   } catch (err) {
-    // User cancelled share or error — silently ignore
     console.warn('Share failed:', err)
   } finally {
     sharing.value = false
+  }
+}
+
+async function copyText() {
+  if (copying.value) return
+  copying.value = true
+
+  try {
+    await copyToClipboard(getShareText())
+    copied.value = true
+    setTimeout(() => { copied.value = false }, 1800)
+  } catch (err) {
+    console.warn('Copy failed:', err)
+  } finally {
+    copying.value = false
   }
 }
 </script>
@@ -108,8 +187,17 @@ async function share() {
       <!-- Action buttons -->
       <div class="action-row">
         <button class="share-btn" :class="{ loading: sharing }" @click="share">
-          <span v-if="!sharing">Share my TismID</span>
-          <span v-else>Generating…</span>
+          <span v-if="!sharing">Share</span>
+          <span v-else>Generating...</span>
+        </button>
+        <button class="download-btn" :class="{ loading: downloading }" @click="downloadImage">
+          <span v-if="!downloading">Download image</span>
+          <span v-else>Generating...</span>
+        </button>
+        <button class="copy-btn" :class="{ copied }" @click="copyText">
+          <span v-if="copied">Copied</span>
+          <span v-else-if="copying">Copying...</span>
+          <span v-else>Copy text</span>
         </button>
         <button class="restart-btn" @click="emit('restart')">
           Start over
@@ -253,28 +341,50 @@ async function share() {
 /* Actions */
 .action-row {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin-top: 4px;
 }
 
-.share-btn {
+.share-btn,
+.download-btn,
+.copy-btn {
   flex: 1;
   padding: 18px 24px;
-  background: var(--text);
-  color: #fff;
   border-radius: var(--radius-sm);
   font-size: 16px;
   font-weight: 700;
   transition: opacity 0.15s, transform 0.1s;
   letter-spacing: -0.01em;
+  white-space: nowrap;
 }
 
-.share-btn:active {
+.share-btn,
+.download-btn {
+  background: var(--text);
+  color: #fff;
+}
+
+.copy-btn {
+  background: var(--surface);
+  color: var(--text);
+  border: 2px solid var(--text);
+}
+
+.share-btn:active,
+.download-btn:active,
+.copy-btn:active {
   transform: scale(0.97);
 }
 
-.share-btn.loading {
+.share-btn.loading,
+.download-btn.loading,
+.copy-btn.copied {
   opacity: 0.6;
+}
+
+.share-btn.loading,
+.download-btn.loading {
   cursor: wait;
 }
 
@@ -294,7 +404,20 @@ async function share() {
   transform: scale(0.97);
 }
 
-/* Hidden share card — off-screen but rendered so html-to-image can capture it */
+@media (max-width: 520px) {
+  .action-row {
+    flex-direction: column;
+  }
+
+  .share-btn,
+  .download-btn,
+  .copy-btn,
+  .restart-btn {
+    width: 100%;
+  }
+}
+
+/* Hidden share card - off-screen but rendered so html-to-image can capture it */
 .share-card-container {
   position: fixed;
   top: 0;

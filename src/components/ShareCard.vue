@@ -29,11 +29,7 @@ const categoryScores = computed(() =>
     </div>
 
     <div class="card-bars">
-      <div
-        v-for="cat in categoryScores"
-        :key="cat.key"
-        class="card-bar-row"
-      >
+      <div v-for="cat in categoryScores" :key="cat.key" class="card-bar-row">
         <div class="bar-label-row">
           <span class="bar-name">{{ cat.shortName }}</span>
           <span class="bar-value" :style="{ color: cat.color }">
@@ -42,15 +38,12 @@ const categoryScores = computed(() =>
           </span>
         </div>
         <div class="bar-track">
-          <div
-            class="bar-fill"
-            :style="{ width: cat.pct + '%', background: cat.color }"
-          />
+          <div class="bar-fill" :style="{ width: cat.pct + '%', background: cat.color }" />
         </div>
       </div>
     </div>
 
-    <div class="card-footer">tismid.app</div>
+    <div class="card-footer">ubershmekel.github.io/tismid/</div>
   </div>
 </template>
 
