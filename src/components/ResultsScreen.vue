@@ -52,7 +52,7 @@ async function share() {
     if (navigator.canShare?.({ files: [file] })) {
       await navigator.share({
         files: [file],
-        text: "My TismID — here's how my brain works",
+        text: "My TismID, here's how my brain works",
       })
     } else {
       const link = document.createElement('a')
@@ -84,11 +84,7 @@ async function share() {
 
       <!-- Category bars -->
       <div class="categories">
-        <div
-          v-for="(cat, i) in categoryScores"
-          :key="cat.key"
-          class="category-row"
-        >
+        <div v-for="(cat, i) in categoryScores" :key="cat.key" class="category-row">
           <div class="category-meta">
             <span class="category-name">{{ cat.name }}</span>
             <div class="category-score-tag">
@@ -100,14 +96,11 @@ async function share() {
             </div>
           </div>
           <div class="bar-track">
-            <div
-              class="bar-fill"
-              :style="{
-                width: barsVisible ? cat.pct + '%' : '0%',
-                background: cat.color,
-                transitionDelay: (i * 80) + 'ms',
-              }"
-            />
+            <div class="bar-fill" :style="{
+              width: barsVisible ? cat.pct + '%' : '0%',
+              background: cat.color,
+              transitionDelay: (i * 80) + 'ms',
+            }" />
           </div>
         </div>
       </div>

@@ -27,7 +27,7 @@ npm run dev
 | Social Intuition     | 5         | 0–15        |
 | Structure Preference | 5         | 0–15        |
 | Detail Focus         | 5         | 0–15        |
-| Action Flexibility   | 5         | 0–15        |
+| Executive Function   | 5         | 0–15        |
 
 **Total: 0–75**
 
@@ -36,8 +36,7 @@ Answers map to 0 (Never) → 3 (Often). Labels: Low (0–4), Medium (5–9), Hig
 
 ## Share card
 
-On the results screen, "Share my TismID" generates a 680px × auto PNG at 2×
-pixel ratio.
+On the results screen, "Share my TismID" generates a png.
 
 - On supported browsers (mobile Safari, Chrome Android): native share sheet with
   the image file
