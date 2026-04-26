@@ -13,7 +13,6 @@ export type Answers = Record<number, AnswerValue>
 export interface CategoryInfo {
   key: Category
   name: string
-  shortName: string
   color: string
   cssVar: string
 }

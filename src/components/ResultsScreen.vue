@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { toPng } from 'html-to-image'
-import { categoryInfoList, getCategoryScore, getScoreLabel } from '../questions'
+import { categoryInfoList, computeCategoryScores, getCategoryScore } from '../questions'
 import type { Answers } from '../types'
+import CategoryBar from './CategoryBar.vue'
 import ShareCard from './ShareCard.vue'
 
 const props = defineProps<{
@@ -25,14 +26,7 @@ const totalScore = computed(() =>
   categoryInfoList.reduce((sum, cat) => sum + getCategoryScore(props.answers, cat.key), 0)
 )
 
-const categoryScores = computed(() =>
-  categoryInfoList.map(cat => ({
-    ...cat,
-    score: getCategoryScore(props.answers, cat.key),
-    label: getScoreLabel(getCategoryScore(props.answers, cat.key)),
-    pct: (getCategoryScore(props.answers, cat.key) / 15) * 100,
-  }))
-)
+const categoryScores = computed(() => computeCategoryScores(props.answers))
 
 onMounted(() => {
   // Trigger bar animations after mount
@@ -68,20 +62,7 @@ function getShareText() {
 }
 
 async function copyToClipboard(text: string) {
-  if (navigator.clipboard?.writeText) {
-    await navigator.clipboard.writeText(text)
-    return
-  }
-
-  const textArea = document.createElement('textarea')
-  textArea.value = text
-  textArea.setAttribute('readonly', '')
-  textArea.style.position = 'fixed'
-  textArea.style.top = '-9999px'
-  document.body.appendChild(textArea)
-  textArea.select()
-  document.execCommand('copy')
-  document.body.removeChild(textArea)
+  await navigator.clipboard.writeText(text)
 }
 
 async function downloadImage() {
@@ -169,25 +150,8 @@ function confirmRestart() {
 
       <!-- Category bars -->
       <div class="categories">
-        <div v-for="(cat, i) in categoryScores" :key="cat.key" class="category-row">
-          <div class="category-meta">
-            <span class="category-name">{{ cat.name }}</span>
-            <div class="category-score-tag">
-              <span class="cat-num" :style="{ color: cat.color }">{{ cat.score }}</span>
-              <span class="cat-max">/15</span>
-              <span class="cat-label" :style="{ background: cat.color + '22', color: cat.color }">
-                {{ cat.label }}
-              </span>
-            </div>
-          </div>
-          <div class="bar-track">
-            <div class="bar-fill" :style="{
-              width: barsVisible ? cat.pct + '%' : '0%',
-              background: cat.color,
-              transitionDelay: (i * 80) + 'ms',
-            }" />
-          </div>
-        </div>
+        <CategoryBar v-for="(cat, i) in categoryScores" :key="cat.key" :name="cat.name" :score="cat.score"
+          :label="cat.label" :pct="cat.pct" :color="cat.color" :visible="barsVisible" :delay="i * 80" />
       </div>
 
       <!-- Action buttons -->
@@ -211,19 +175,9 @@ function confirmRestart() {
       </div>
     </div>
 
-    <div
-      v-if="showRestartConfirm"
-      class="modal-backdrop"
-      role="presentation"
-      @click.self="showRestartConfirm = false"
-    >
-      <div
-        class="confirm-modal"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="restart-title"
-        aria-describedby="restart-description"
-      >
+    <div v-if="showRestartConfirm" class="modal-backdrop" role="presentation" @click.self="showRestartConfirm = false">
+      <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="restart-title"
+        aria-describedby="restart-description">
         <h2 id="restart-title">Start over?</h2>
         <p id="restart-description">
           This will erase your current answers and take you back to the beginning of the quiz.
@@ -312,64 +266,6 @@ function confirmRestart() {
   display: flex;
   flex-direction: column;
   gap: 18px;
-}
-
-.category-row {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.category-meta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.category-name {
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.category-score-tag {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.cat-num {
-  font-size: 15px;
-  font-weight: 800;
-}
-
-.cat-max {
-  font-size: 11px;
-  color: var(--text-muted);
-  font-weight: 500;
-}
-
-.cat-label {
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  padding: 3px 8px;
-  border-radius: 99px;
-}
-
-.bar-track {
-  height: 12px;
-  background: var(--surface-2);
-  border-radius: 99px;
-  overflow: hidden;
-}
-
-.bar-fill {
-  height: 100%;
-  border-radius: 99px;
-  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Actions */

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { categoryInfoList, getCategoryScore, getScoreLabel } from '../questions'
+import { computeCategoryScores } from '../questions'
 import type { Answers } from '../types'
 
 const props = defineProps<{
@@ -8,14 +8,7 @@ const props = defineProps<{
   totalScore: number
 }>()
 
-const categoryScores = computed(() =>
-  categoryInfoList.map(cat => ({
-    ...cat,
-    score: getCategoryScore(props.answers, cat.key),
-    label: getScoreLabel(getCategoryScore(props.answers, cat.key)),
-    pct: (getCategoryScore(props.answers, cat.key) / 15) * 100,
-  }))
-)
+const categoryScores = computed(() => computeCategoryScores(props.answers))
 </script>
 
 <template>
@@ -31,7 +24,7 @@ const categoryScores = computed(() =>
     <div class="card-bars">
       <div v-for="cat in categoryScores" :key="cat.key" class="card-bar-row">
         <div class="bar-label-row">
-          <span class="bar-name">{{ cat.shortName }}</span>
+          <span class="bar-name">{{ cat.name }}</span>
           <span class="bar-value" :style="{ color: cat.color }">
             {{ cat.score }}<span class="bar-max">/15</span>
             <span class="bar-badge" :style="{ background: cat.color + '22', color: cat.color }">{{ cat.label }}</span>

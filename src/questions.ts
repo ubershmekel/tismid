@@ -1,4 +1,4 @@
-import type { Question, CategoryInfo } from "./types";
+import type { Question, CategoryInfo, Answers } from "./types";
 
 export const questions: Question[] = [
   // Sensory Sensitivity
@@ -141,39 +141,43 @@ export const categoryInfoList: CategoryInfo[] = [
   {
     key: "sensory",
     name: "Sensory Sensitivity",
-    shortName: "Sensory",
     color: "#e8825a",
     cssVar: "--c-sensory",
   },
   {
     key: "social",
     name: "Social Processing Load",
-    shortName: "Social",
     color: "#4aa8d8",
     cssVar: "--c-social",
   },
   {
     key: "structure",
     name: "Structure Preference",
-    shortName: "Structure",
     color: "#9b7edc",
     cssVar: "--c-structure",
   },
   {
     key: "detail",
     name: "Detail Focus",
-    shortName: "Detail",
     color: "#52b788",
     cssVar: "--c-detail",
   },
   {
     key: "action",
     name: "Executive Function Load",
-    shortName: "Executive",
     color: "#d4a82a",
     cssVar: "--c-action",
   },
 ];
+
+export function computeCategoryScores(answers: Answers) {
+  return categoryInfoList.map((cat) => ({
+    ...cat,
+    score: getCategoryScore(answers, cat.key),
+    label: getScoreLabel(getCategoryScore(answers, cat.key)),
+    pct: (getCategoryScore(answers, cat.key) / 15) * 100,
+  }));
+}
 
 export const ANSWER_LABELS = ["Never", "Rarely", "Sometimes", "Often"] as const;
 
