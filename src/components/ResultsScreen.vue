@@ -19,6 +19,7 @@ const downloading = ref(false)
 const copying = ref(false)
 const copied = ref(false)
 const barsVisible = ref(false)
+const showRestartConfirm = ref(false)
 
 const totalScore = computed(() =>
   categoryInfoList.reduce((sum, cat) => sum + getCategoryScore(props.answers, cat.key), 0)
@@ -146,6 +147,11 @@ async function copyText() {
     copying.value = false
   }
 }
+
+function confirmRestart() {
+  showRestartConfirm.value = false
+  emit('restart')
+}
 </script>
 
 <template>
@@ -199,9 +205,37 @@ async function copyText() {
           <span v-else-if="copying">Copying...</span>
           <span v-else>Copy text</span>
         </button>
-        <button class="restart-btn" @click="emit('restart')">
+        <button class="restart-btn" @click="showRestartConfirm = true">
           Start over
         </button>
+      </div>
+    </div>
+
+    <div
+      v-if="showRestartConfirm"
+      class="modal-backdrop"
+      role="presentation"
+      @click.self="showRestartConfirm = false"
+    >
+      <div
+        class="confirm-modal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="restart-title"
+        aria-describedby="restart-description"
+      >
+        <h2 id="restart-title">Start over?</h2>
+        <p id="restart-description">
+          This will erase your current answers and take you back to the beginning of the quiz.
+        </p>
+        <div class="modal-actions">
+          <button class="modal-cancel-btn" @click="showRestartConfirm = false">
+            Cancel
+          </button>
+          <button class="modal-confirm-btn" @click="confirmRestart">
+            Erase answers
+          </button>
+        </div>
       </div>
     </div>
 
@@ -404,6 +438,71 @@ async function copyText() {
   transform: scale(0.97);
 }
 
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(26, 26, 46, 0.42);
+}
+
+.confirm-modal {
+  width: min(100%, 360px);
+  padding: 24px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-lg);
+  color: var(--text);
+}
+
+.confirm-modal h2 {
+  margin-bottom: 8px;
+  font-size: 22px;
+  line-height: 1.15;
+  letter-spacing: 0;
+}
+
+.confirm-modal p {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.45;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.modal-cancel-btn,
+.modal-confirm-btn {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-weight: 700;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.modal-cancel-btn {
+  background: var(--surface);
+  color: var(--text-muted);
+  border: 2px solid var(--border);
+}
+
+.modal-confirm-btn {
+  background: var(--text);
+  color: #fff;
+}
+
+.modal-cancel-btn:active,
+.modal-confirm-btn:active {
+  transform: scale(0.97);
+}
+
 @media (max-width: 520px) {
   .action-row {
     flex-direction: column;
@@ -413,6 +512,15 @@ async function copyText() {
   .download-btn,
   .copy-btn,
   .restart-btn {
+    width: 100%;
+  }
+
+  .modal-actions {
+    flex-direction: column-reverse;
+  }
+
+  .modal-cancel-btn,
+  .modal-confirm-btn {
     width: 100%;
   }
 }

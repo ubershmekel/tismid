@@ -1,13 +1,36 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import type { Answers } from './types'
+import { questions } from './questions'
 import { clearQuizProgress, loadQuizProgress, saveQuizProgress } from './quizStorage'
 import QuizScreen from './components/QuizScreen.vue'
 import ResultsScreen from './components/ResultsScreen.vue'
 
 type Screen = 'quiz' | 'results'
 
-const savedProgress = loadQuizProgress()
+function createRandomAnswers(): Answers {
+  return Object.fromEntries(
+    questions.map(question => [question.id, Math.floor(Math.random() * 4)])
+  ) as Answers
+}
+
+function loadInitialProgress() {
+  const params = new URLSearchParams(window.location.search)
+  if (params.has('debugrandom')) {
+    const randomAnswers = createRandomAnswers()
+    const progress = {
+      answers: randomAnswers,
+      currentIndex: 0,
+      completed: true,
+    }
+    saveQuizProgress(progress)
+    return progress
+  }
+
+  return loadQuizProgress()
+}
+
+const savedProgress = loadInitialProgress()
 const screen = ref<Screen>(savedProgress?.completed ? 'results' : 'quiz')
 const answers = ref<Answers>(savedProgress?.completed ? savedProgress.answers : {})
 
