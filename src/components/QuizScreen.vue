@@ -141,11 +141,13 @@ function goBack() {
   display: flex;
   flex-direction: column;
   height: 100%;
+  width: 100%;
   max-width: 540px;
   margin: 0 auto;
   padding: 20px 20px 32px;
   gap: 16px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Progress */
@@ -197,6 +199,8 @@ function goBack() {
   flex: 1;
   display: flex;
   align-items: center;
+  width: 100%;
+  min-width: 0;
   min-height: 120px;
   padding: 8px 0;
 }
