@@ -29,12 +29,12 @@ export const questions: Question[] = [
   { id: 19, text: 'I enjoy refining or optimizing small parts of something', category: 'detail' },
   { id: 20, text: 'I lose track of the bigger goal while focusing on details', category: 'detail' },
 
-  // Action Flexibility
-  { id: 21, text: 'I prefer having clear instructions before starting a task', category: 'action' },
+  // Executive Function
+  { id: 21, text: 'I find it hard to stop an activity and switch to something else', category: 'action' },
   { id: 22, text: 'I get pulled away from tasks by more stimulating things', category: 'action' },
-  { id: 23, text: 'I rely on step-by-step processes to get things done', category: 'action' },
+  { id: 23, text: 'I lose track of time when absorbed in something', category: 'action' },
   { id: 24, text: 'I can hyperfocus intensely on things that interest me', category: 'action' },
-  { id: 25, text: 'I struggle to start open-ended tasks with no clear structure', category: 'action' },
+  { id: 25, text: 'I put off starting tasks even when I genuinely want to do them', category: 'action' },
 ]
 
 export const categoryInfoList: CategoryInfo[] = [
@@ -42,7 +42,7 @@ export const categoryInfoList: CategoryInfo[] = [
   { key: 'social',    name: 'Social Intuition',      shortName: 'Social',    color: '#4aa8d8', cssVar: '--c-social'    },
   { key: 'structure', name: 'Structure Preference',  shortName: 'Structure', color: '#9b7edc', cssVar: '--c-structure' },
   { key: 'detail',    name: 'Detail Focus',          shortName: 'Detail',    color: '#52b788', cssVar: '--c-detail'    },
-  { key: 'action',    name: 'Action Flexibility',    shortName: 'Action',    color: '#d4a82a', cssVar: '--c-action'    },
+  { key: 'action',    name: 'Executive Function',     shortName: 'Executive', color: '#d4a82a', cssVar: '--c-action'    },
 ]
 
 export const ANSWER_LABELS = ['Never', 'Rarely', 'Sometimes', 'Often'] as const
