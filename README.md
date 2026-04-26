@@ -1,6 +1,8 @@
 # TismID
 
-A playful self-reflection quiz that produces a shareable identity card image.
+A playful self-reflection quiz that produces a shareable neurodivergence
+identity card image. The spectrum is vast, it could be nice to have a simple
+model to communicate about it.
 
 25 questions across 5 neurodivergent trait categories. No backend, no login, no
 data collection.
