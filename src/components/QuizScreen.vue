@@ -11,6 +11,8 @@ const currentIndex = ref(0)
 const answers = ref<Answers>({})
 const locked = ref(false)
 const justAnswered = ref(false)
+let advanceTimeout: number | undefined
+const AUTO_ADVANCE_DELAY_MS = 180
 
 const total = questions.length
 const currentQuestion = computed(() => questions[currentIndex.value])
@@ -25,23 +27,26 @@ const progressPct = computed(() => ((currentIndex.value) / total) * 100)
 
 function selectAnswer(value: AnswerValue) {
   if (locked.value) return
-  answers.value[currentQuestion.value.id] = value
+  const questionId = currentQuestion.value.id
+  const questionIndex = currentIndex.value
+
+  answers.value[questionId] = value
   justAnswered.value = true
   locked.value = true
 
-  setTimeout(() => {
-    locked.value = false
-    // Auto-advance after brief pause
-    setTimeout(() => {
-      if (answers.value[currentQuestion.value.id] === value) {
-        advance()
-      }
-    }, 300)
-  }, 500)
+  window.clearTimeout(advanceTimeout)
+  advanceTimeout = window.setTimeout(() => {
+    if (currentIndex.value === questionIndex && answers.value[questionId] === value) {
+      advance()
+    }
+  }, AUTO_ADVANCE_DELAY_MS)
 }
 
 function advance() {
   if (!canGoNext.value) return
+  window.clearTimeout(advanceTimeout)
+  locked.value = false
+
   if (currentIndex.value < total - 1) {
     currentIndex.value++
     justAnswered.value = false
@@ -52,6 +57,7 @@ function advance() {
 
 function goBack() {
   if (!canGoBack.value) return
+  window.clearTimeout(advanceTimeout)
   currentIndex.value--
   justAnswered.value = false
   locked.value = false
@@ -122,7 +128,6 @@ function goBack() {
       <button
         class="nav-btn next-btn"
         :disabled="!canGoNext"
-        :class="{ ready: canGoNext }"
         @click="advance"
       >
         {{ currentIndex < total - 1 ? 'Next →' : 'See Results →' }}
@@ -287,14 +292,9 @@ function goBack() {
 }
 
 .next-btn {
-  background: var(--surface-2);
+  background: var(--surface);
   color: var(--text-muted);
-  border: 2px solid transparent;
-}
-
-.next-btn.ready {
-  background: var(--text);
-  color: #fff;
+  border: 2px solid var(--border);
 }
 
 /* Transitions */
