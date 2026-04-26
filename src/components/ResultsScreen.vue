@@ -119,7 +119,7 @@ async function share() {
           <span v-else>Generating…</span>
         </button>
         <button class="restart-btn" @click="emit('restart')">
-          Retake
+          Start over
         </button>
       </div>
     </div>

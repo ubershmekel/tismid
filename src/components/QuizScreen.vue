@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { questions, ANSWER_LABELS, categoryInfoList } from '../questions'
+import { loadQuizProgress, saveQuizProgress } from '../quizStorage'
 import type { Answers, AnswerValue } from '../types'
 
 const emit = defineEmits<{
   complete: [answers: Answers]
 }>()
 
-const currentIndex = ref(0)
-const answers = ref<Answers>({})
+const savedProgress = loadQuizProgress()
+const currentIndex = ref(savedProgress?.completed ? 0 : savedProgress?.currentIndex ?? 0)
+const answers = ref<Answers>(savedProgress?.completed ? {} : savedProgress?.answers ?? {})
 const locked = ref(false)
 const justAnswered = ref(false)
 let advanceTimeout: number | undefined
@@ -26,12 +28,21 @@ const canUseNext = computed(() => canGoNext.value && !locked.value)
 
 const progressPct = computed(() => ((currentIndex.value) / total) * 100)
 
+function persistProgress() {
+  saveQuizProgress({
+    answers: answers.value,
+    currentIndex: currentIndex.value,
+    completed: false,
+  })
+}
+
 function selectAnswer(value: AnswerValue) {
   if (locked.value) return
   const questionId = currentQuestion.value.id
   const questionIndex = currentIndex.value
 
   answers.value[questionId] = value
+  persistProgress()
   justAnswered.value = true
   locked.value = true
 
@@ -50,6 +61,7 @@ function advance() {
 
   if (currentIndex.value < total - 1) {
     currentIndex.value++
+    persistProgress()
     justAnswered.value = false
   } else {
     emit('complete', { ...answers.value })
@@ -60,6 +72,7 @@ function goBack() {
   if (!canGoBack.value) return
   window.clearTimeout(advanceTimeout)
   currentIndex.value--
+  persistProgress()
   justAnswered.value = false
   locked.value = false
 }
