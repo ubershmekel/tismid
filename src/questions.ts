@@ -41,7 +41,7 @@ export const questions: Question[] = [
   },
   {
     id: 8,
-    text: "I realize social expectations only after the fact",
+    text: "I miss social cues in the moment but understand them afterward",
     category: "social",
   },
   {
